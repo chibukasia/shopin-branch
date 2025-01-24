@@ -1,7 +1,9 @@
+import SignInForm from "@/screens/sign-in/signinform"
+
 const SignInPage = () => {
     return(
         <div>
-            Sign In here
+            <SignInForm />
         </div>
     )
 }
