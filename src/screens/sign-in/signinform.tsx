@@ -56,7 +56,8 @@ export default function SignInForm(){
             {error && <div>
                 <p className='text-red-500 italic bg-black'>{error}</p>
                 </div>}
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 w-full md:w-96'>
+                
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 w-1/2 md:w-96'>
                 <FormField 
                 control={form.control}
                 name='email'
@@ -82,7 +83,10 @@ export default function SignInForm(){
                     </FormItem>
                 )}
                  />
-                 <Button>{loading ? 'Signing in...' : 'Sign In'}</Button>
+                 <div className='my-6 grid space-y-8 justify-center items-center'>
+                   <Button type='submit'>{loading ? 'Signing in...' : 'Sign In'}</Button>
+                 </div>
+                
                 {/* <ActionButton title='Sign In' type='submit' className='cursor-pointer text-white w-32' loading={loading}  loaderText='Signing in...'/> */}
             </form>
         </Form>
