@@ -1,7 +1,9 @@
+import Home from "@/screens/home"
+
 const Dashboard = () => {
     return(
         <div>
-            Dashboard
+            <Home />
         </div>
     )
 }
