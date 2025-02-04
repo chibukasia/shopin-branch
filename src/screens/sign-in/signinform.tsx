@@ -10,6 +10,7 @@ import { useState } from 'react'
 // import ActionButton from '@/components/atoms/buttons/ActionButton'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import ActionButton from '@/components/atoms/buttons/ActionButton'
 
 const formSchema = z.object({
     email: z.string({required_error: 'Email is required'}).email().max(50, {message: 'Maximum character limit reached'}),
@@ -52,12 +53,13 @@ export default function SignInForm(){
        
     }
     return(
+        <div className='w-full'>
         <Form {...form}>
             {error && <div>
                 <p className='text-red-500 italic bg-black'>{error}</p>
                 </div>}
                 
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 w-1/2 md:w-96'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='px-32'>
                 <FormField 
                 control={form.control}
                 name='email'
@@ -87,8 +89,9 @@ export default function SignInForm(){
                    <Button type='submit'>{loading ? 'Signing in...' : 'Sign In'}</Button>
                  </div>
                 
-                {/* <ActionButton title='Sign In' type='submit' className='cursor-pointer text-white w-32' loading={loading}  loaderText='Signing in...'/> */}
+                <ActionButton title='Sign In' type='submit' className='cursor-pointer text-white w-32' loading={loading}  loaderText='Signing in...'/>
             </form>
         </Form>
+        </div>
     )
 }
