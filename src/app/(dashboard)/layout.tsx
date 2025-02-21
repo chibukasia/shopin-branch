@@ -1,8 +1,8 @@
 import SideBar from "@/components/molecules/navigations/sidebar";
-import Dashboard from "./page";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ReactNode } from "react";
 
-export default function DashboardLayout() {
+export default function DashboardLayout(props: { children: ReactNode }) {
   return (
     <div className="flex bg-muted">
       <div>
@@ -19,7 +19,7 @@ export default function DashboardLayout() {
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </div>
-        <Dashboard />
+        {props.children}
       </div>
     </div>
   );

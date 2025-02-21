@@ -14,7 +14,7 @@ interface RadioProps {
   items: { label: string; value: string | number }[];
   label: string;
   control: Control; 
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export default function FormRadioGroup(props: RadioProps) {

@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import Dropzone from "react-dropzone";
 import { Control } from "react-hook-form";
 import { MdCloudUpload } from "react-icons/md";
@@ -42,10 +43,10 @@ const FileDropzone = (props: FDropzoneProps) => {
             >
               {({ getRootProps, getInputProps }) => (
                 <section
-                  {...getRootProps()}
+                  
                   className="flex bg-muted rounded-xl p-4 items-center justify-center border-4 border-dashed"
                 >
-                  <div>
+                  <div {...getRootProps()}>
                     <div className="flex justify-center">
                       <MdCloudUpload
                         size={64}
@@ -53,7 +54,7 @@ const FileDropzone = (props: FDropzoneProps) => {
                       />
                     </div>
                     <div>
-                      <input {...getInputProps()} {...field} value={field.value}/>
+                      <Input id="picture" type="file" {...getInputProps()} value={field.value}/>
                       <p>
                         Drag &apos;n&apos; drop some files here, or click to
                         select files
