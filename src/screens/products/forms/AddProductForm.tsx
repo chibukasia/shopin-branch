@@ -10,6 +10,7 @@ import { Form } from "@/components/ui/form";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
+import ActionButton from "@/components/atoms/buttons/ActionButton";
 
 const AddProductForm = () => {
   const [accepetedFiles, setAcceptedFiles] = useState<File[]>([]);
@@ -321,6 +322,9 @@ const AddProductForm = () => {
                 </div>
               ))}
             </div>
+          </div>
+          <div className="flex justify-center">
+            <ActionButton title="Create Product" loading={false} loaderText="Creating..."/>
           </div>
         </form>
       </Form>
