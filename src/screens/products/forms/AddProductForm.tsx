@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @next/next/no-img-element */
 "use client";
 import FileDropzone from "@/components/molecules/forms/FileDropZone";
@@ -5,12 +6,12 @@ import { FormCheckbox } from "@/components/molecules/forms/FormCheckbox";
 import FormInput from "@/components/molecules/forms/FormInput";
 import FormRadioGroup from "@/components/molecules/forms/FormRadioGroup";
 import FormSelect from "@/components/molecules/forms/FormSelect";
-import FormTextarea from "@/components/molecules/forms/FormTextArea";
 import { Form } from "@/components/ui/form";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
+import FormRichTextEditor from "@/components/molecules/forms/FormRichTextEditor";
 
 const AddProductForm = () => {
   const [accepetedFiles, setAcceptedFiles] = useState<File[]>([]);
@@ -19,11 +20,15 @@ const AddProductForm = () => {
   );
   const form = useForm();
 
+  const onSubmit = (data: any) => {
+    console.log(data)
+  }
+
   return (
     <div className="">
       <Form {...form}>
         <h1 className="font-bold text-lg">Add Product</h1>
-        <form className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="bg-white p-4 rounded-lg">
             <h1 className="bg-muted p-2 font-semibold">Product Details</h1>
             <div className="flex justify-between gap-4">
@@ -46,21 +51,16 @@ const AddProductForm = () => {
             </div>
             <div className="flex justify-between gap-4">
               <div className="w-full">
-                <FormTextarea
-                  control={form.control}
-                  name="short_description"
-                  label="Product Short Description"
-                  placeholder="Enter product short description..."
-                />
+              <FormRichTextEditor control={form.control} name="short_description"
+                  label="Product Short Description"/>
+                
               </div>
               <div className="w-full">
-                <FormTextarea
-                  control={form.control}
+              <FormRichTextEditor control={form.control}
                   name="long_description"
-                  label="Product Long Description"
-                  placeholder="Enter product long description..."
-                />
+                  label="Product Long Description"/>
               </div>
+              
             </div>
             <div className="flex justify-between gap-4">
               <div className="w-full">
@@ -254,12 +254,6 @@ const AddProductForm = () => {
                 />
               </div>
               <div className="w-full">
-                {/* <FormInput
-                  control={form.control}
-                  name="images.gallery_images"
-                  label="Gallery Images"
-                  placeholder="Enter gallery images url..."
-                /> */}
               </div>
             </div>
           </div>
@@ -324,7 +318,7 @@ const AddProductForm = () => {
             </div>
           </div>
           <div className="flex justify-center">
-            <ActionButton title="Create Product" loading={false} loaderText="Creating..."/>
+            <ActionButton title="Create Product" loading={false} loaderText="Creating..." />
           </div>
         </form>
       </Form>
