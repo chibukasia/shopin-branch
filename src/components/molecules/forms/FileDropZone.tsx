@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 import {
   FormControl,
@@ -16,7 +18,7 @@ interface FDropzoneProps {
   accept?: {
     [key: string]: string[];
   };
-  control: Control;
+  control: Control<any>;
   label: string;
   name: string;
   description?: string;

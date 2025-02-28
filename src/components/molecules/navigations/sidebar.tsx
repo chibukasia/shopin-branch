@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import { MdMenuOpen, MdOutlineInventory } from "react-icons/md";
 import { FaBasketShopping, FaCircleUser, FaTruckDroplet, FaUsers } from "react-icons/fa6";
@@ -12,6 +13,7 @@ import { useRouter } from "next/navigation";
 import { authRedirect } from "@/utils/auth";
 import axiosClient from "@/utils/axios-client";
 import Link from "next/link";
+import useUserStore from "@/screens/hooks/useUserStore";
 
 const menuItems = [
   {
@@ -68,12 +70,14 @@ const menuItems = [
 
 const SideBar = () => {
   const [open, setOpen] = useState<boolean>(true)
-  const [user, setUser] = useState<any>(null)
+  const {user, setUser} = useUserStore(state=> state)
 
   const router = useRouter()
 
     useEffect(() =>{
-        axiosClient.get('/login/me').then((user) => {setUser(user.data)}).catch((error) => {
+        axiosClient.get('/login/me').then((user) => {
+          setUser(user.data)
+        }).catch((error) => {
           authRedirect(router, error)
         })
       },[router])

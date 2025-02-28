@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   FormControl,
   FormDescription,
@@ -13,7 +14,7 @@ interface FormIputProps {
   name: string;
   label: string;
   description?: string;
-  control: Control;
+  control: Control<any>;
   placeholder?: string;
   type?: string;
 }

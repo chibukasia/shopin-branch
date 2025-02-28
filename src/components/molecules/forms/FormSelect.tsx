@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ReactNode } from "react"
@@ -8,7 +10,7 @@ interface FormSelectProps {
     label?: ReactNode
     description?: string
     placeholder?: string
-    control: Control
+    control: Control<any>
     items: {
         label: string
         value: string

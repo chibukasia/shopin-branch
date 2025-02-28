@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 import {
   FormControl,
@@ -13,7 +15,7 @@ interface RadioProps {
   name: string;
   items: { label: string; value: string | number }[];
   label: string;
-  control: Control; 
+  control: Control<any>; 
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 

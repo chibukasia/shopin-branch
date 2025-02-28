@@ -7,23 +7,40 @@ import FormInput from "@/components/molecules/forms/FormInput";
 import FormRadioGroup from "@/components/molecules/forms/FormRadioGroup";
 import FormSelect from "@/components/molecules/forms/FormSelect";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
 import FormRichTextEditor from "@/components/molecules/forms/FormRichTextEditor";
+import { useQuery } from "@tanstack/react-query";
+import { fetchAttributes, fetchProductCategories } from "../api";
 
-const AddProductForm = () => {
+interface IProps{
+  branchId: string
+}
+const AddProductForm = ({branchId}: IProps) => {
   const [accepetedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [galleryAcceptedImages, setGalleryAcceptedImages] = useState<File[]>(
     []
   );
+
   const form = useForm();
 
+
+  const {data: categories} = useQuery({
+    queryKey: ['product-categories'],
+    queryFn: () => fetchProductCategories(branchId)
+  })
+
+  const {} = useQuery({
+    queryKey: ['product-attributes'],
+    queryFn: () => fetchAttributes(branchId)
+  })
   const onSubmit = (data: any) => {
     console.log(data)
   }
 
+  
   return (
     <div className="">
       <Form {...form}>
@@ -51,19 +68,6 @@ const AddProductForm = () => {
             </div>
             <div className="flex justify-between gap-4">
               <div className="w-full">
-              <FormRichTextEditor control={form.control} name="short_description"
-                  label="Product Short Description"/>
-                
-              </div>
-              <div className="w-full">
-              <FormRichTextEditor control={form.control}
-                  name="long_description"
-                  label="Product Long Description"/>
-              </div>
-              
-            </div>
-            <div className="flex justify-between gap-4">
-              <div className="w-full">
                 <FormInput
                   control={form.control}
                   name="asin"
@@ -78,6 +82,18 @@ const AddProductForm = () => {
                   label="Product UPC"
                   placeholder="Enter product UPC..."
                 />
+              </div>
+            </div>
+            <div className="flex justify-between gap-4">
+              <div className="w-full">
+              <FormRichTextEditor control={form.control} name="short_description"
+                  label="Product Short Description"/>
+                
+              </div>
+              <div className="w-full">
+              <FormRichTextEditor control={form.control}
+                  name="long_description"
+                  label="Product Long Description"/>
               </div>
             </div>
           </div>
@@ -147,7 +163,7 @@ const AddProductForm = () => {
                 <FormRadioGroup
                   control={form.control}
                   name="inventory.status"
-                  label="Product ASIN"
+                  label="Inventory Status"
                   items={[
                     {
                       label: "In Stock",
@@ -178,7 +194,7 @@ const AddProductForm = () => {
                   control={form.control}
                   name="category.name"
                   label="Category"
-                  items={[]}
+                  items={categories?.map((category) => ({label: category.name, value: category.id})) ?? []}
                 />
               </div>
               <div className="w-full">

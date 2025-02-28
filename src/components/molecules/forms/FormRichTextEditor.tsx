@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import {
   FormControl,
   FormDescription,
@@ -12,7 +14,7 @@ import ReactQuill from "react-quill-new";
 import "react-quill-new/dist/quill.snow.css";
 
 interface FITextAreaProps {
-  control: Control;
+  control: Control<any>;
   label: string;
   name: string;
   description?: string;

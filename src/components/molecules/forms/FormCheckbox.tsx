@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -14,7 +16,7 @@ interface FormCheckboxProps {
   name: string;
   label: string;
   description?: string;
-  control: Control;
+  control: Control<any>;
 }
 export function FormCheckbox(props: FormCheckboxProps) {
   const { name, label, description, control } = props;
