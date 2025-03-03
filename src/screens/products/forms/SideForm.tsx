@@ -7,14 +7,19 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { attributeSchema, categorySchema, subcategorySchema } from './product-schema';
 import { z } from "zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createAttribute, createProductCategory } from "../api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createAttribute, createProductCategory, fetchProductCategories } from "../api";
 import { EAttribute, EProductCategory } from "../types";
+import { ProductCategory } from "@/screens/global-types";
 interface IProps{
   branchId: string
 }
 const SideForm = ({branchId}: IProps) => {
 
+  const {data: categories} = useQuery({
+    queryKey: ['product-categories'],
+    queryFn: () => fetchProductCategories(branchId)
+  })
     const categoryForm = useForm<z.infer<typeof categorySchema>>({
       resolver: zodResolver(categorySchema),
       defaultValues: {
@@ -39,8 +44,7 @@ const SideForm = ({branchId}: IProps) => {
     const {mutate, isPending} = useMutation({
       mutationKey: ['product-category'],
       mutationFn: (data: EProductCategory) => createProductCategory(data),
-      onSuccess: (data)=>{
-        console.log(data)
+      onSuccess: ()=>{
         queryClient.invalidateQueries({queryKey: ['product-categories']})
       },
       onError: (error) => {
@@ -50,7 +54,14 @@ const SideForm = ({branchId}: IProps) => {
 
     const {mutate: attributeMutate, isPending: attributePending} = useMutation({
       mutationKey: ['attribute'],
-      mutationFn: (data: EAttribute) => createAttribute(data)
+      mutationFn: (data: EAttribute) => createAttribute(data),
+      onSuccess: (data)=>{
+        console.log(data)
+        queryClient.invalidateQueries({queryKey: ['attributes']})
+      },
+      onError: (error) => {
+        console.log(error)
+      }
     })
 
     const onCategoriesSubmit = (data: z.infer<typeof categorySchema>) => {
@@ -62,7 +73,11 @@ const SideForm = ({branchId}: IProps) => {
     }
 
     const onAttributesSubmit = (data: z.infer<typeof attributeSchema>) => {
-      attributeMutate(data)
+      const newData = {
+        ...data,
+        values: data.values.split(',')
+      }
+      attributeMutate(newData)
     }
 
     return (
@@ -91,7 +106,7 @@ const SideForm = ({branchId}: IProps) => {
                           <FormInput control={subCategoryForm.control} name="name" label="Product Sub Category"/>
                         </div>
                         <div>
-                          <FormSelect control={subCategoryForm.control} name="parent_category" label="Parent Category" items={[]}/>
+                          <FormSelect control={subCategoryForm.control} name="parent_category_id" label="Parent Category" items={categories?.map((category: ProductCategory) =>({label: category.name, value: category.id})) ?? []}/>
                         </div>
                         <div className="flex justify-end py-2">
                           <ActionButton title="Create" type="submit" loading={isPending} loaderText="Creating..."/>

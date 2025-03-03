@@ -45,13 +45,14 @@ export const productSchema = z.object({
 @todo 
 Update Side forms ✅
 Create side form schemas if necessary ✅
-integrate side forms to api 
+integrate side forms to api ✅
 hide manage stock feature
 update the product attributes section to display values to select
 Switch parent category and category
 Hide inventory fields based on managed stock value
 Collect data from form correctly
 integrate data to backend api
+update error handling on backend for attributes and product categories
 */
 
 export const categorySchema = z.object({
@@ -61,12 +62,12 @@ export const categorySchema = z.object({
 
 export const subcategorySchema = z.object({
     name: z.string({required_error: "Sub Category name required"}),
-    parent_category: z.string({required_error: "Parent category required"}),
+    parent_category_id: z.string({required_error: "Parent category required"}),
     branch_id: z.string(),
 })
 
 export const attributeSchema = z.object({
     name: z.string({required_error: "Attribute name required"}),
-    values: z.string().array().nonempty({message: "At least an attribute value is required"}),
+    values: z.string({required_error: "Attribute values are required"}),
     branch_id: z.string(),
 })

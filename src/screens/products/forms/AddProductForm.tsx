@@ -7,13 +7,14 @@ import FormInput from "@/components/molecules/forms/FormInput";
 import FormRadioGroup from "@/components/molecules/forms/FormRadioGroup";
 import FormSelect from "@/components/molecules/forms/FormSelect";
 import { Form } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
 import FormRichTextEditor from "@/components/molecules/forms/FormRichTextEditor";
 import { useQuery } from "@tanstack/react-query";
 import { fetchAttributes, fetchProductCategories } from "../api";
+import { ProductCategory } from "@/screens/global-types";
 
 interface IProps{
   branchId: string
@@ -32,7 +33,7 @@ const AddProductForm = ({branchId}: IProps) => {
     queryFn: () => fetchProductCategories(branchId)
   })
 
-  const {} = useQuery({
+  const {data: attributes} = useQuery({
     queryKey: ['product-attributes'],
     queryFn: () => fetchAttributes(branchId)
   })
@@ -194,7 +195,7 @@ const AddProductForm = ({branchId}: IProps) => {
                   control={form.control}
                   name="category.name"
                   label="Category"
-                  items={categories?.map((category) => ({label: category.name, value: category.id})) ?? []}
+                  items={categories?.map((category: ProductCategory) => ({label: category.name, value: category.id})) ?? []}
                 />
               </div>
               <div className="w-full">
@@ -266,7 +267,7 @@ const AddProductForm = ({branchId}: IProps) => {
                   control={form.control}
                   name="attributes"
                   label="Attributes"
-                  items={[]}
+                  items={attributes?.map((attribute: {name: string, values: string[]}) => ({label: attribute.name, value: attribute.name}))??[]}
                 />
               </div>
               <div className="w-full">
