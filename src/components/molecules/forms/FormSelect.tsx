@@ -15,9 +15,10 @@ interface FormSelectProps {
         label: string
         value: string
     }[]
+    onChange?: (value: string) => void;
 }
 const FormSelect = (props: FormSelectProps) => {
-    const {control, name, label, placeholder, items} = props
+    const {control, name, label, placeholder, items, onChange} = props
     return(
         <FormField
         control={control}
@@ -25,7 +26,10 @@ const FormSelect = (props: FormSelectProps) => {
         render={({field}) => (
             <FormItem>
                 <FormLabel>{label}</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value} >
+                <Select onValueChange={(value)=>{
+                    if (onChange) onChange(value)
+                    field.onChange(value)
+                }} defaultValue={field.value} >
                     <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder={placeholder ?? 'Select...'}/>

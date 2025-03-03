@@ -57,7 +57,7 @@ const SideForm = ({branchId}: IProps) => {
       mutationFn: (data: EAttribute) => createAttribute(data),
       onSuccess: (data)=>{
         console.log(data)
-        queryClient.invalidateQueries({queryKey: ['attributes']})
+        queryClient.invalidateQueries({queryKey: ['product-attributes']})
       },
       onError: (error) => {
         console.log(error)

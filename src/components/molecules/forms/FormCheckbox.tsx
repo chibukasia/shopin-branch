@@ -17,9 +17,10 @@ interface FormCheckboxProps {
   label: string;
   description?: string;
   control: Control<any>;
+  onChange?: (value: boolean) => void;
 }
 export function FormCheckbox(props: FormCheckboxProps) {
-  const { name, label, description, control } = props;
+  const { name, label, description, control, onChange } = props;
   return (
     <FormField
       control={control}
@@ -27,7 +28,12 @@ export function FormCheckbox(props: FormCheckboxProps) {
       render={({ field }) => (
         <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md py-4">
           <FormControl>
-            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+            <Checkbox checked={field.value} onCheckedChange={(value: boolean) => {
+              if (onChange) {
+                onChange(value);
+              }
+              field.onChange(value);
+            }} />
           </FormControl>
           <div className="space-y-1 leading-none">
             <FormLabel>{label}</FormLabel>

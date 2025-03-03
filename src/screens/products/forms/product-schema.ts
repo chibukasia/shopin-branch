@@ -46,7 +46,7 @@ export const productSchema = z.object({
 Update Side forms ✅
 Create side form schemas if necessary ✅
 integrate side forms to api ✅
-hide manage stock feature
+hide manage stock feature ✅
 update the product attributes section to display values to select
 Switch parent category and category
 Hide inventory fields based on managed stock value

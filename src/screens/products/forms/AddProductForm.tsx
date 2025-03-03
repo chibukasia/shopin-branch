@@ -7,7 +7,7 @@ import FormInput from "@/components/molecules/forms/FormInput";
 import FormRadioGroup from "@/components/molecules/forms/FormRadioGroup";
 import FormSelect from "@/components/molecules/forms/FormSelect";
 import { Form } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
@@ -15,38 +15,71 @@ import FormRichTextEditor from "@/components/molecules/forms/FormRichTextEditor"
 import { useQuery } from "@tanstack/react-query";
 import { fetchAttributes, fetchProductCategories } from "../api";
 import { ProductCategory } from "@/screens/global-types";
+import { EAttribute } from "../types";
+import FormMultiCheckbox from "@/components/molecules/forms/FormMultiCheckbox";
 
-interface IProps{
-  branchId: string
+interface IProps {
+  branchId: string;
 }
-const AddProductForm = ({branchId}: IProps) => {
+const AddProductForm = ({ branchId }: IProps) => {
   const [accepetedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [galleryAcceptedImages, setGalleryAcceptedImages] = useState<File[]>(
     []
   );
+  const [showStockForm, setShowStockForm] = useState<boolean>(true);
+  const [productAttributes, setProductAttributes] = useState<
+    { name: string; items: { label: string; value: string }[] }[]
+  >([]);
 
-  const form = useForm();
+  const form = useForm({
+    defaultValues: {
+      inventory: {
+        manage_stock: true,
+      },
+    },
+  });
 
+  const { data: categories } = useQuery({
+    queryKey: ["product-categories"],
+    queryFn: () => fetchProductCategories(branchId),
+  });
 
-  const {data: categories} = useQuery({
-    queryKey: ['product-categories'],
-    queryFn: () => fetchProductCategories(branchId)
-  })
-
-  const {data: attributes} = useQuery({
-    queryKey: ['product-attributes'],
-    queryFn: () => fetchAttributes(branchId)
-  })
+  const { data: attributes } = useQuery({
+    queryKey: ["product-attributes"],
+    queryFn: () => fetchAttributes(branchId),
+  });
   const onSubmit = (data: any) => {
-    console.log(data)
-  }
+    console.log(data);
+  };
 
-  
+  const onValChange = (val: boolean) => {
+    setShowStockForm(val);
+  };
+  const onValueChange = (val: string) => {
+    const itemArr =
+      attributes?.find(
+        (attr: EAttribute) => attr.name.toLowerCase() === val.toLowerCase()
+      )?.values ?? [];
+    setProductAttributes((previousAttrs) => [
+      ...previousAttrs,
+      {
+        name: val,
+        items: itemArr.map((item: string) => ({ label: item, value: item })),
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    console.log(productAttributes);
+  }, [productAttributes]);
   return (
     <div className="">
       <Form {...form}>
         <h1 className="font-bold text-lg">Add Product</h1>
-        <form className="flex flex-col gap-4" onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          className="flex flex-col gap-4"
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className="bg-white p-4 rounded-lg">
             <h1 className="bg-muted p-2 font-semibold">Product Details</h1>
             <div className="flex justify-between gap-4">
@@ -87,14 +120,18 @@ const AddProductForm = ({branchId}: IProps) => {
             </div>
             <div className="flex justify-between gap-4">
               <div className="w-full">
-              <FormRichTextEditor control={form.control} name="short_description"
-                  label="Product Short Description"/>
-                
+                <FormRichTextEditor
+                  control={form.control}
+                  name="short_description"
+                  label="Product Short Description"
+                />
               </div>
               <div className="w-full">
-              <FormRichTextEditor control={form.control}
+                <FormRichTextEditor
+                  control={form.control}
                   name="long_description"
-                  label="Product Long Description"/>
+                  label="Product Long Description"
+                />
               </div>
             </div>
           </div>
@@ -129,59 +166,66 @@ const AddProductForm = ({branchId}: IProps) => {
                   control={form.control}
                   name="inventory.manage_stock"
                   label="Manage Stock"
+                  onChange={onValChange}
                 />
               </div>
-              <div className="w-full">
-                <FormCheckbox
-                  control={form.control}
-                  name="inventory.sold_indipendently"
-                  label="Sold Indipendently"
-                />
-              </div>
+              {showStockForm && (
+                <div className="w-full">
+                  <FormCheckbox
+                    control={form.control}
+                    name="inventory.sold_indipendently"
+                    label="Sold Indipendently"
+                  />
+                </div>
+              )}
             </div>
-            <div className="flex justify-between gap-4 pt-4">
-              <div className="w-full">
-                <FormInput
-                  control={form.control}
-                  name="inventory.quantity"
-                  label="Product Quantity"
-                  placeholder="0.00..."
-                  type="number"
-                />
-              </div>
-              <div className="w-full">
-                <FormInput
-                  control={form.control}
-                  name="inventory.minimum_inventory"
-                  label="Product Minimum Inventory"
-                  placeholder="0.00..."
-                  type="number"
-                />
-              </div>
-            </div>
-            <div className="flex justify-between gap-4">
-              <div className="w-full">
-                <FormRadioGroup
-                  control={form.control}
-                  name="inventory.status"
-                  label="Inventory Status"
-                  items={[
-                    {
-                      label: "In Stock",
-                      value: "in_stock",
-                    },
-                    {
-                      label: "Out Of Stock",
-                      value: "out_of_stock",
-                    },
-                    {
-                      label: "Low On Stock",
-                      value: "low_on_stock",
-                    },
-                  ]}
-                />
-              </div>
-            </div>
+            {showStockForm && (
+              <>
+                <div className="flex justify-between gap-4 pt-4  duration-500">
+                  <div className="w-full">
+                    <FormInput
+                      control={form.control}
+                      name="inventory.quantity"
+                      label="Product Quantity"
+                      placeholder="0.00..."
+                      type="number"
+                    />
+                  </div>
+                  <div className="w-full">
+                    <FormInput
+                      control={form.control}
+                      name="inventory.minimum_inventory"
+                      label="Product Minimum Inventory"
+                      placeholder="0.00..."
+                      type="number"
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-between gap-4">
+                  <div className="w-full">
+                    <FormRadioGroup
+                      control={form.control}
+                      name="inventory.status"
+                      label="Inventory Status"
+                      items={[
+                        {
+                          label: "In Stock",
+                          value: "in_stock",
+                        },
+                        {
+                          label: "Out Of Stock",
+                          value: "out_of_stock",
+                        },
+                        {
+                          label: "Low On Stock",
+                          value: "low_on_stock",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </>
+            )}
           </div>
           <div className="bg-white p-4 rounded-lg">
             <h1 className="bg-muted p-2 font-semibold">Product Category</h1>
@@ -195,7 +239,12 @@ const AddProductForm = ({branchId}: IProps) => {
                   control={form.control}
                   name="category.name"
                   label="Category"
-                  items={categories?.map((category: ProductCategory) => ({label: category.name, value: category.id})) ?? []}
+                  items={
+                    categories?.map((category: ProductCategory) => ({
+                      label: category.name,
+                      value: category.id,
+                    })) ?? []
+                  }
                 />
               </div>
               <div className="w-full">
@@ -267,12 +316,33 @@ const AddProductForm = ({branchId}: IProps) => {
                   control={form.control}
                   name="attributes"
                   label="Attributes"
-                  items={attributes?.map((attribute: {name: string, values: string[]}) => ({label: attribute.name, value: attribute.name}))??[]}
+                  items={
+                    attributes?.map(
+                      (attribute: { name: string; values: string[] }) => ({
+                        label: attribute.name,
+                        value: attribute.name,
+                      })
+                    ) ?? []
+                  }
+                  onChange={onValueChange}
                 />
               </div>
-              <div className="w-full">
-              </div>
+              <div className="w-full"></div>
             </div>
+            {productAttributes.map((productAttr) => (
+              <div className="flex gap-3" key={productAttr.name}>
+                <div className="w-1/4 p-3">
+                  <p>{productAttr.name}</p>
+                </div>
+                <div className="w-3/4">
+                  <FormMultiCheckbox
+                    control={form.control}
+                    name="attribute_values"
+                    items={productAttr.items}
+                  />
+                </div>
+              </div>
+            ))}
           </div>
           <div className="bg-white p-4 rounded-lg">
             <h1 className="bg-muted p-2 font-semibold">Product Images</h1>
@@ -291,15 +361,15 @@ const AddProductForm = ({branchId}: IProps) => {
               <div className="w-full flex items-center gap-2">
                 {accepetedFiles.map((file, index) => (
                   <div
-                  key={index}
-                  className="rounded-md w-32 h-32 flex items-center justify-center"
-                  style={{
-                    backgroundImage: `url(${URL.createObjectURL(file)})`,
-                    backgroundSize: "contain",
-                    backgroundPosition: "center",
+                    key={index}
+                    className="rounded-md w-32 h-32 flex items-center justify-center"
+                    style={{
+                      backgroundImage: `url(${URL.createObjectURL(file)})`,
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",
-                  }}
-                />
+                    }}
+                  />
                 ))}
               </div>
             </div>
@@ -327,7 +397,7 @@ const AddProductForm = ({branchId}: IProps) => {
                       backgroundImage: `url(${URL.createObjectURL(file)})`,
                       backgroundSize: "contain",
                       backgroundPosition: "center",
-                        backgroundRepeat: "no-repeat",
+                      backgroundRepeat: "no-repeat",
                     }}
                   />
                 </div>
@@ -335,7 +405,11 @@ const AddProductForm = ({branchId}: IProps) => {
             </div>
           </div>
           <div className="flex justify-center">
-            <ActionButton title="Create Product" loading={false} loaderText="Creating..." />
+            <ActionButton
+              title="Create Product"
+              loading={false}
+              loaderText="Creating..."
+            />
           </div>
         </form>
       </Form>
