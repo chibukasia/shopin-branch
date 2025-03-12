@@ -52,7 +52,8 @@ update the product attributes section to display values to select ✅
 Switch parent category and category ✅
 Hide inventory fields based on managed stock value ✅
 Collect data from form correctly
-Remove selcted image for upload
+Upload files to firebase stoarage
+Remove selcted image for upload ✅
 Add image gallery where all uploaded images can be found
 integrate data to backend api
 update error handling on backend for attributes and product categories

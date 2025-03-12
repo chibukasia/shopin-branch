@@ -20,6 +20,7 @@ import FormMultiCheckbox from "@/components/molecules/forms/FormMultiCheckbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema } from "./product-schema";
 import { z } from "zod";
+import { MdRemoveCircleOutline } from "react-icons/md";
 
 interface IProps {
   branchId: string;
@@ -82,14 +83,21 @@ const AddProductForm = ({ branchId }: IProps) => {
   };
 
   const onMultiChange = (values: string[]) => {
-    const items = attributes.map((attr: EAttribute)=> {
+    const items = attributes.map((attr: EAttribute) => {
       return {
         name: attr.name,
-        values: values.filter(value=> attr.values.includes(value))
-      }
-      
-    })
-    form.setValue("attributes", items)
+        values: values.filter((value) => attr.values.includes(value)),
+      };
+    });
+    form.setValue("attributes", items);
+  };
+
+  const handleUploadImage = () => {
+    
+  }
+
+  const handleUploadGallery = () => {
+    //
   }
   const onSubmit = (data: any) => {
     console.log(data);
@@ -398,7 +406,9 @@ const AddProductForm = ({ branchId }: IProps) => {
                     }}
                   />
                 ))}
+                {accepetedFiles.length > 0 && <ActionButton title="Upload" onClick={handleUploadImage}/>}
               </div>
+              
             </div>
             <div className="">
               <FileDropzone
@@ -416,8 +426,22 @@ const AddProductForm = ({ branchId }: IProps) => {
               {galleryAcceptedImages.map((file, index) => (
                 <div
                   key={index}
-                  className="border border-1 border-gray-400 rounded-md w-24 h-24 flex items-center justify-center"
+                  className="relative border border-1 border-gray-400 rounded-md w-24 h-24 flex flex-col items-center justify-center"
                 >
+                  <div
+                    className="absolute -top-2 -right-2"
+                    onClick={() =>
+                      setGalleryAcceptedImages(
+                        galleryAcceptedImages.filter((f) => f !== file)
+                      )
+                    }
+                  >
+                    <MdRemoveCircleOutline
+                      color="red"
+                      size={24}
+                      className="bg-white"
+                    />
+                  </div>
                   <div
                     className="rounded-md w-20 h-20"
                     style={{
@@ -429,6 +453,7 @@ const AddProductForm = ({ branchId }: IProps) => {
                   />
                 </div>
               ))}
+              {galleryAcceptedImages.length > 0 && <ActionButton title="Upload" onClick={handleUploadGallery}/>}
             </div>
           </div>
           <div className="flex justify-center">
