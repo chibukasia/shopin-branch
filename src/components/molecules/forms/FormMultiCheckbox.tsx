@@ -19,10 +19,10 @@ interface FormCheckboxProps {
     label: string;
     value: string | number;
   }[];
-  onChange?: (value: boolean) => void;
+  onChange?: (value: string[]) => void;
 }
 const FormMultiCheckbox = (props: FormCheckboxProps) => {
-  const { control, name, label, description, items } = props;
+  const { control, name, label, description, items, onChange } = props;
   return (
     <FormField
       name={name}
@@ -38,7 +38,7 @@ const FormMultiCheckbox = (props: FormCheckboxProps) => {
               <FormField
                 key={item.label}
                 control={control}
-                name="items"
+                name={name}
                 render={({ field }) => {
                   return (
                     <FormItem
@@ -49,14 +49,22 @@ const FormMultiCheckbox = (props: FormCheckboxProps) => {
                         <Checkbox
                           checked={field.value?.includes(item.value)}
                           onCheckedChange={(checked) => {
-                            return checked
-                              ? field.onChange([...field.value, item.value])
-                              : field.onChange(
-                                  field.value?.filter(
-                                    (value: string | number | boolean) =>
-                                      value !== item.value
-                                  )
-                                );
+                            if (checked) {
+                              if (onChange){
+                                onChange([...field.value, item.value])
+                              }
+                              return field.onChange([...field.value, item.value])
+                            }else{
+                              if (onChange){
+                                onChange([...field.value, item.value])
+                              }
+                              return field.onChange(
+                                field.value?.filter(
+                                  (value: string | number | boolean) =>
+                                    value !== item.value
+                                )
+                              );
+                            }
                           }}
                         />
                       </FormControl>

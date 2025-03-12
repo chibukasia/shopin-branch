@@ -83,7 +83,7 @@ export default function SignInForm() {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your password " {...field} />
+                  <Input placeholder="Enter your password " {...field} type="password"/>
                 </FormControl>
               </FormItem>
             )}

@@ -7,7 +7,7 @@ import FormInput from "@/components/molecules/forms/FormInput";
 import FormRadioGroup from "@/components/molecules/forms/FormRadioGroup";
 import FormSelect from "@/components/molecules/forms/FormSelect";
 import { Form } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
@@ -17,6 +17,9 @@ import { fetchAttributes, fetchProductCategories } from "../api";
 import { ProductCategory } from "@/screens/global-types";
 import { EAttribute } from "../types";
 import FormMultiCheckbox from "@/components/molecules/forms/FormMultiCheckbox";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { productSchema } from "./product-schema";
+import { z } from "zod";
 
 interface IProps {
   branchId: string;
@@ -30,13 +33,16 @@ const AddProductForm = ({ branchId }: IProps) => {
   const [productAttributes, setProductAttributes] = useState<
     { name: string; items: { label: string; value: string }[] }[]
   >([]);
+  const [subCategories, setSubCategories] = useState<ProductCategory[]>([]);
 
-  const form = useForm({
+  const form = useForm<z.infer<typeof productSchema>>({
     defaultValues: {
       inventory: {
         manage_stock: true,
       },
+      attribute_values: [],
     },
+    resolver: zodResolver(productSchema),
   });
 
   const { data: categories } = useQuery({
@@ -48,13 +54,11 @@ const AddProductForm = ({ branchId }: IProps) => {
     queryKey: ["product-attributes"],
     queryFn: () => fetchAttributes(branchId),
   });
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
 
   const onValChange = (val: boolean) => {
     setShowStockForm(val);
   };
+
   const onValueChange = (val: string) => {
     const itemArr =
       attributes?.find(
@@ -69,9 +73,27 @@ const AddProductForm = ({ branchId }: IProps) => {
     ]);
   };
 
-  useEffect(() => {
-    console.log(productAttributes);
-  }, [productAttributes]);
+  const onCategoryChange = (value: string) => {
+    setSubCategories(
+      categories?.filter(
+        (category: ProductCategory) => category.parent_category_id === value
+      )
+    );
+  };
+
+  const onMultiChange = (values: string[]) => {
+    const items = attributes.map((attr: EAttribute)=> {
+      return {
+        name: attr.name,
+        values: values.filter(value=> attr.values.includes(value))
+      }
+      
+    })
+    form.setValue("attributes", items)
+  }
+  const onSubmit = (data: any) => {
+    console.log(data);
+  };
   return (
     <div className="">
       <Form {...form}>
@@ -237,8 +259,9 @@ const AddProductForm = ({ branchId }: IProps) => {
               <div className="w-full">
                 <FormSelect
                   control={form.control}
-                  name="category.name"
+                  name="category"
                   label="Category"
+                  onChange={onCategoryChange}
                   items={
                     categories?.map((category: ProductCategory) => ({
                       label: category.name,
@@ -250,9 +273,12 @@ const AddProductForm = ({ branchId }: IProps) => {
               <div className="w-full">
                 <FormSelect
                   control={form.control}
-                  name="category.parent_category"
-                  label="Parent Category"
-                  items={[]}
+                  name="sub_category"
+                  label="Sub Category"
+                  items={subCategories?.map((category: ProductCategory) => ({
+                    label: category.name,
+                    value: category.id,
+                  }))}
                 />
               </div>
             </div>
@@ -272,7 +298,7 @@ const AddProductForm = ({ branchId }: IProps) => {
                 <FormInput
                   control={form.control}
                   name="shipping.weight"
-                  label="Product Weight"
+                  label="Product Weight (In Kg)"
                   placeholder="0.00..."
                   type="number"
                 />
@@ -314,7 +340,7 @@ const AddProductForm = ({ branchId }: IProps) => {
               <div className="w-full">
                 <FormSelect
                   control={form.control}
-                  name="attributes"
+                  name="attribute"
                   label="Attributes"
                   items={
                     attributes?.map(
@@ -339,6 +365,7 @@ const AddProductForm = ({ branchId }: IProps) => {
                     control={form.control}
                     name="attribute_values"
                     items={productAttr.items}
+                    onChange={onMultiChange}
                   />
                 </div>
               </div>

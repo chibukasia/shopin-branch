@@ -75,7 +75,7 @@ const SideForm = ({branchId}: IProps) => {
     const onAttributesSubmit = (data: z.infer<typeof attributeSchema>) => {
       const newData = {
         ...data,
-        values: data.values.split(',')
+        values: data.values.replace(/\s/g, '').split(',')
       }
       attributeMutate(newData)
     }

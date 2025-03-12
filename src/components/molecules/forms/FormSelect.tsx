@@ -27,7 +27,9 @@ const FormSelect = (props: FormSelectProps) => {
             <FormItem>
                 <FormLabel>{label}</FormLabel>
                 <Select onValueChange={(value)=>{
-                    if (onChange) onChange(value)
+                    if (onChange){
+                        onChange(value)
+                    }
                     field.onChange(value)
                 }} defaultValue={field.value} >
                     <FormControl>
