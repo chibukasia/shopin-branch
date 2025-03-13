@@ -33,7 +33,7 @@ const FileDropzone = (props: FDropzoneProps) => {
     <FormField
       control={control}
       name={name}
-      render={({ field }) => (
+      render={() => (
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
@@ -56,7 +56,7 @@ const FileDropzone = (props: FDropzoneProps) => {
                       />
                     </div>
                     <div>
-                      <Input id="picture" type="file" {...getInputProps()} value={field.value}/>
+                      <Input id="picture" type="file" {...getInputProps()} />
                       <p>
                         Drag &apos;n&apos; drop some files here, or click to
                         select files

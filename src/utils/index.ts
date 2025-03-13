@@ -2,13 +2,13 @@
 import { storage } from "@/lib/firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-const uploadFile = async (selectedFile: File[]) => {
-  const logoRef = ref(storage, "images/shopinn/" + selectedFile[0].name);
+const uploadFile = async (selectedFile: File, branchName: string) => {
+  const fileRef = ref(storage, `images/shopinn/${branchName}/${new Date().getTime()+selectedFile.name}`);
   try {
-    await uploadBytes(logoRef, selectedFile[0], {
-      contentType: "image/jpeg",
+    await uploadBytes(fileRef, selectedFile, {
+      contentType: selectedFile.type ?? "image/jpeg",
     });
-    const url = await getDownloadURL(logoRef);
+    const url = await getDownloadURL(fileRef);
     return url;
   } catch (error: any) {
     console.log(error);

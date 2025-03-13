@@ -5,7 +5,7 @@ const inventorySchema = z.object({
     sold_independently: z.boolean().default(true),
     quantity: z.coerce.number({required_error: "Quantity is required"}).nonnegative({message: "Quantity cannot be less than 0"}),
     minimum_inventory: z.coerce.number().nonnegative({message: "Minimum Inventory cannot be less than 0"}).optional(),
-    status: z.string().optional(),
+    stock_status: z.string().optional(),
 })
 
 const productAttribute = z.object({
@@ -15,7 +15,7 @@ const productAttribute = z.object({
 
 const productShipping = z.object({
     shipping_class: z.string().optional(),
-    weight: z.string().optional(),
+    weight: z.coerce.number().optional(),
     dimensions: z.object({
         length: z.coerce.number().optional().default(0),
         width: z.coerce.number().optional().default(0),
@@ -35,7 +35,7 @@ export const productSchema = z.object({
     category: z.string({required_error: 'Category is required'}),
     sub_category: z.string().optional(),
     primary_image: z.string({required_error: "Primary Image is required"}),
-    gallery_images: z.string().array().optional(),
+    image_gallery: z.string().array().optional(),
     inventory: inventorySchema.optional(),
     attribute: z.string().optional(),
     attributes: productAttribute.array().optional(),

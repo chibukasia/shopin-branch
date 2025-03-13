@@ -12,15 +12,18 @@ import { useForm } from "react-hook-form";
 import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
 import FormRichTextEditor from "@/components/molecules/forms/FormRichTextEditor";
-import { useQuery } from "@tanstack/react-query";
-import { fetchAttributes, fetchProductCategories } from "../api";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createProduct, fetchAttributes, fetchProductCategories } from "../api";
 import { ProductCategory } from "@/screens/global-types";
-import { EAttribute } from "../types";
+import { EAttribute, EProduct } from "../types";
 import FormMultiCheckbox from "@/components/molecules/forms/FormMultiCheckbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { productSchema } from "./product-schema";
 import { z } from "zod";
 import { MdRemoveCircleOutline } from "react-icons/md";
+import uploadFile from "@/utils";
+import useUserStore from "@/screens/hooks/useUserStore";
+import { toast } from "sonner";
 
 interface IProps {
   branchId: string;
@@ -31,10 +34,14 @@ const AddProductForm = ({ branchId }: IProps) => {
     []
   );
   const [showStockForm, setShowStockForm] = useState<boolean>(true);
+  const [uploadingPrimary, setUploadingPrimary] = useState<boolean>(false)
+  const [uploadingGallery, setUploadingGallery] = useState<boolean>(false)
   const [productAttributes, setProductAttributes] = useState<
     { name: string; items: { label: string; value: string }[] }[]
   >([]);
   const [subCategories, setSubCategories] = useState<ProductCategory[]>([]);
+
+  const user = useUserStore(state => state.user)
 
   const form = useForm<z.infer<typeof productSchema>>({
     defaultValues: {
@@ -56,6 +63,24 @@ const AddProductForm = ({ branchId }: IProps) => {
     queryFn: () => fetchAttributes(branchId),
   });
 
+  const {mutate, isPending} = useMutation({
+    mutationKey: ['product'],
+    mutationFn: (data: EProduct) => createProduct(data),
+    onSuccess: () =>{
+      toast.success("Product Created Succesfully", {
+        position: 'top-right',
+      })
+      form.reset()
+    },
+    onError(error) {
+        console.log(error)
+        toast.error("Error Creating Product", {
+          description: "Could not create your product",
+          position: 'top-right',
+        })
+    },
+  })
+
   const onValChange = (val: boolean) => {
     setShowStockForm(val);
   };
@@ -75,6 +100,7 @@ const AddProductForm = ({ branchId }: IProps) => {
   };
 
   const onCategoryChange = (value: string) => {
+    form.setValue('sub_category', undefined)
     setSubCategories(
       categories?.filter(
         (category: ProductCategory) => category.parent_category_id === value
@@ -89,19 +115,38 @@ const AddProductForm = ({ branchId }: IProps) => {
         values: values.filter((value) => attr.values.includes(value)),
       };
     });
-    form.setValue("attributes", items);
+    console.log(items)
+    form.setValue("attributes", items.filter((item: EAttribute)=> item.values.length > 0));
   };
 
   const handleUploadImage = () => {
-    
+    setUploadingPrimary(true)
+    uploadFile(accepetedFiles[0], user?.branch.branch_name as string).then((url)=>{
+      if(url) form.setValue('primary_image', url as string)
+    }).catch(console.log).finally(()=> setUploadingPrimary(false))
   }
 
   const handleUploadGallery = () => {
-    //
+    setUploadingGallery(true)
+    const promises = galleryAcceptedImages.map((imageFile)=> uploadFile(imageFile, user?.branch.branch_name as string) )
+    Promise.all(promises).then((urls)=>{
+      if (urls) form.setValue("image_gallery", urls as string[])
+    }).catch(console.log).finally(()=> setUploadingGallery(false))
   }
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
+  const onSubmit = (data: z.infer<typeof productSchema>) => {
+    const newData: EProduct = {
+      ...data,
+      categories: [data.category, data.sub_category].filter((categ)=> categ !== undefined),
+      branch_id: branchId,
+    }
+    delete newData.attribute_values
+    delete newData.category
+    delete newData.sub_category
+    delete newData.attribute
+
+    mutate(newData)
+  };  
+
   return (
     <div className="">
       <Form {...form}>
@@ -235,7 +280,7 @@ const AddProductForm = ({ branchId }: IProps) => {
                   <div className="w-full">
                     <FormRadioGroup
                       control={form.control}
-                      name="inventory.status"
+                      name="inventory.stock_status"
                       label="Inventory Status"
                       items={[
                         {
@@ -299,7 +344,7 @@ const AddProductForm = ({ branchId }: IProps) => {
                   control={form.control}
                   name="shipping.shipping_class"
                   label="Shipping Class"
-                  items={[]}
+                  items={[{label: "Standard", value: "standard"}]}
                 />
               </div>
               <div className="w-full">
@@ -406,14 +451,14 @@ const AddProductForm = ({ branchId }: IProps) => {
                     }}
                   />
                 ))}
-                {accepetedFiles.length > 0 && <ActionButton title="Upload" onClick={handleUploadImage}/>}
+                {accepetedFiles.length > 0 && <ActionButton type="button" title="Upload" onClick={handleUploadImage} loading={uploadingPrimary} loaderText="Uploading"/>}
               </div>
               
             </div>
             <div className="">
               <FileDropzone
                 control={form.control}
-                name="gallery_images"
+                name="image_gallery"
                 label="Gallery Images"
                 setAcceptedFiles={setGalleryAcceptedImages}
                 accept={{
@@ -453,14 +498,15 @@ const AddProductForm = ({ branchId }: IProps) => {
                   />
                 </div>
               ))}
-              {galleryAcceptedImages.length > 0 && <ActionButton title="Upload" onClick={handleUploadGallery}/>}
+              {galleryAcceptedImages.length > 0 && <ActionButton type="button" title="Upload" onClick={handleUploadGallery} loading={uploadingGallery} loaderText="Uploading"/>}
             </div>
           </div>
           <div className="flex justify-center">
             <ActionButton
               title="Create Product"
-              loading={false}
+              loading={isPending}
               loaderText="Creating..."
+              type="submit"
             />
           </div>
         </form>

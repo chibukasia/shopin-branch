@@ -1,5 +1,5 @@
 import axiosClient from "@/utils/axios-client";
-import { EProductCategory, EProductSubCategory, EAttribute } from './types';
+import { EProductCategory, EProductSubCategory, EAttribute, EProduct } from './types';
 
 export const createAttribute = async(data: EAttribute) => {
     const response = await axiosClient.post('/products/attributes/', data)
@@ -18,5 +18,10 @@ export const fetchAttributes = async (id: string) => {
 
 export const fetchProductCategories = async(id: string) => {
     const response = await axiosClient.get(`/products/product-categories/${id}/`)
+    return response.data
+}
+
+export const createProduct = async (data: EProduct) =>{
+    const response = await axiosClient.post('/products/', data)
     return response.data
 }
