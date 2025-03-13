@@ -25,3 +25,8 @@ export const createProduct = async (data: EProduct) =>{
     const response = await axiosClient.post('/products/', data)
     return response.data
 }
+
+export const fetchBranchProducts = async(branchId: string) => {
+    const response = await axiosClient.get(`/products/${branchId}/`)
+    return response.data
+}

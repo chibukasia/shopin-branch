@@ -1,7 +1,12 @@
+import ProductTable from "./tables/ProductTable";
+
 const ProductScreen = () => {
     return(
         <div>
-            <p>Product Scree</p>
+            <h2 className="font-bold text-xl py-2">Products</h2>
+            <div>
+                <ProductTable />
+            </div>
         </div>
     )
 };

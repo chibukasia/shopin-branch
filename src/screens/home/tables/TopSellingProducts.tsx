@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client"
 import DataTable from "@/components/molecules/tables/DataTable"
 import DataTableHeaderColumn from "@/components/molecules/tables/DataTableColumnHeader"
@@ -13,7 +14,7 @@ interface TopSellerProduct {
 
 const tableColumns: ColumnDef<TopSellerProduct>[] = [
     {
-        header: ({column}) => <DataTableHeaderColumn title="Product"  column={column}/>,
+        header: ({column}) => <DataTableHeaderColumn title="Product Image"  column={column}/>,
         accessorKey: "image",
         cell: ({ row }) => (
             <div className="flex items-center space-x-4">
@@ -26,7 +27,7 @@ const tableColumns: ColumnDef<TopSellerProduct>[] = [
         ),
     },
     {
-        header: ({column}) => <DataTableHeaderColumn title="Name"  column={column}/>,
+        header: ({column}) => <DataTableHeaderColumn title="Product Name"  column={column}/>,
         accessorKey: "name",
     },
     {
