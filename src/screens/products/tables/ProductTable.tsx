@@ -4,7 +4,6 @@ import { productsTableColumns } from "./columns";
 import { useQuery } from "@tanstack/react-query";
 import useUserStore from "@/screens/hooks/useUserStore";
 import { fetchBranchProducts } from "../api";
-import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const ProductTable = () => {
@@ -14,9 +13,7 @@ const ProductTable = () => {
     queryFn: () => fetchBranchProducts(user?.branch.id ?? ""),
   });
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+
   return (
     <div>
       {isLoading ? (
@@ -34,7 +31,9 @@ const ProductTable = () => {
           
         </div>
       ) : (
-        <DataTable data={data ?? []} columns={productsTableColumns} />
+        <div className="bg-white rounded-lg">
+          <DataTable data={data ?? []} columns={productsTableColumns} />
+        </div>
       )}
     </div>
   );

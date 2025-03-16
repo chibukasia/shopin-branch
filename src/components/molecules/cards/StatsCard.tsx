@@ -18,11 +18,11 @@ interface StatsCardProps {
 const StatsCard = (props: StatsCardProps) => {
   const { title, description, content, footer, subTitle } = props;
   return (
-    <Card className="w-56 shrink">
+    <Card className="w-56 shrink cursor-pointer">
       <CardHeader>
         <CardTitle className="text-2xl">{title}</CardTitle>
         <CardTitle className="text-xl">{subTitle}</CardTitle>
-        {description && <CardDescription>Card Description</CardDescription>}
+        {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       {content && (
         <CardContent>
@@ -31,7 +31,7 @@ const StatsCard = (props: StatsCardProps) => {
       )}
       {footer && (
         <CardFooter>
-          <p>Card Footer</p>
+          <p>{footer}</p>
         </CardFooter>
       )}
     </Card>
