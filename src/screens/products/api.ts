@@ -27,6 +27,11 @@ export const createProduct = async (data: EProduct) =>{
 }
 
 export const fetchBranchProducts = async(branchId: string) => {
-    const response = await axiosClient.get(`/products/${branchId}/`)
+    const response = await axiosClient.get(`/products/branch/${branchId}/`)
+    return response.data
+}
+
+export const updateProduct = async (id: string, data: EProduct) => {
+    const response = await axiosClient.put(`/products/${id}/`, data)
     return response.data
 }

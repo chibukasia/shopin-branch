@@ -13,7 +13,7 @@ import React from "react";
 import ActionButton from "@/components/atoms/buttons/ActionButton";
 import FormRichTextEditor from "@/components/molecules/forms/FormRichTextEditor";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { createProduct, fetchAttributes, fetchProductCategories } from "../api";
+import { createProduct, fetchAttributes, fetchProductCategories, updateProduct } from '../api';
 import { ProductCategory } from "@/screens/global-types";
 import { EAttribute, EProduct } from "../types";
 import FormMultiCheckbox from "@/components/molecules/forms/FormMultiCheckbox";
@@ -27,8 +27,9 @@ import { toast } from "sonner";
 
 interface IProps {
   branchId: string;
+  productData?: any;
 }
-const AddProductForm = ({ branchId }: IProps) => {
+const AddProductForm = ({ branchId, productData }: IProps) => {
   const [accepetedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [galleryAcceptedImages, setGalleryAcceptedImages] = useState<File[]>(
     []
@@ -50,6 +51,21 @@ const AddProductForm = ({ branchId }: IProps) => {
       },
       attribute_values: [],
     },
+    values: {...productData,
+      category: productData?.categories[0].id,
+      sub_category: productData?.categories[1].id,
+      attributes: productData?.attributes.map((attr: EAttribute) => {
+        return {
+          name: attr.name,
+          values: attr.values,
+        };
+      }
+      ),
+      attribute_values: productData?.attributes.map((attr: EAttribute) => {
+        return attr.values;
+      }
+      ).flat(),
+    },
     resolver: zodResolver(productSchema),
   });
 
@@ -65,16 +81,16 @@ const AddProductForm = ({ branchId }: IProps) => {
 
   const {mutate, isPending} = useMutation({
     mutationKey: ['product'],
-    mutationFn: (data: EProduct) => createProduct(data),
+    mutationFn: (data: EProduct) => productData ? updateProduct(productData.id, data) :createProduct(data),
     onSuccess: () =>{
-      toast.success("Product Created Succesfully", {
+      toast.success(productData ? "Product updated Succesfully" : "Product Created Succesfully", {
         position: 'top-right',
       })
       form.reset()
     },
     onError(error) {
         console.log(error)
-        toast.error("Error Creating Product", {
+        toast.error(productData ? "Error updating product" :"Error Creating Product", {
           description: "Could not create your product",
           position: 'top-right',
         })
@@ -115,7 +131,7 @@ const AddProductForm = ({ branchId }: IProps) => {
         values: values.filter((value) => attr.values.includes(value)),
       };
     });
-    console.log(items)
+    
     form.setValue("attributes", items.filter((item: EAttribute)=> item.values.length > 0));
   };
 
@@ -147,10 +163,12 @@ const AddProductForm = ({ branchId }: IProps) => {
     mutate(newData)
   };  
 
+  console.log(productData)
+
   return (
     <div className="">
       <Form {...form}>
-        <h1 className="font-bold text-lg">Add Product</h1>
+        <h1 className="font-bold text-lg">{productData ? 'Edit Product': 'Add Product'}</h1>
         <form
           className="flex flex-col gap-4"
           onSubmit={form.handleSubmit(onSubmit)}
@@ -400,6 +418,9 @@ const AddProductForm = ({ branchId }: IProps) => {
                       (attribute: { name: string; values: string[] }) => ({
                         label: attribute.name,
                         value: attribute.name,
+                        disabled: productAttributes.some(
+                          (attr) => attr.name === attribute.name
+                        ),
                       })
                     ) ?? []
                   }
@@ -439,6 +460,19 @@ const AddProductForm = ({ branchId }: IProps) => {
                 />
               </div>
               <div className="w-full flex items-center gap-2">
+                {productData && 
+                  <div
+                    className="rounded-md w-32 h-32 flex items-center justify-center"
+                    style={{
+                      backgroundImage: "'https://firebasestorage.googleapis.com/v0/b/trendy-17370.appspot.com/o/images%2Fshopinn%2FNaivas%20Bypass%2F1741880353921hoodies-square.jpg?alt=media&token=9b6b36b5-c1c6-4878-842a-a60c96f1af24",
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  >
+                    <img src={productData.primary_image} alt="Product Image" className="w-full h-full object-cover rounded-md"/>
+                  </div>
+                }
                 {accepetedFiles.map((file, index) => (
                   <div
                     key={index}
@@ -500,12 +534,40 @@ const AddProductForm = ({ branchId }: IProps) => {
               ))}
               {galleryAcceptedImages.length > 0 && <ActionButton type="button" title="Upload" onClick={handleUploadGallery} loading={uploadingGallery} loaderText="Uploading"/>}
             </div>
+            {productData && productData.image_gallery.map((img: string) => (
+                <div
+                  key={img}
+                  className="relative border border-1 border-gray-400 rounded-md w-24 h-24 flex flex-col items-center justify-center"
+                >
+                  <div
+                    className="absolute -top-2 -right-2"
+                    onClick={() => {}}
+                  >
+                    <MdRemoveCircleOutline
+                      color="red"
+                      size={24}
+                      className="bg-white"
+                    />
+                  </div>
+                  <div
+                    className="rounded-md w-20 h-20"
+                    style={{
+                      backgroundImage: img,
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }}
+                  >
+                    <img src={img} alt="Product Image" className="w-full h-full object-cover rounded-md"/>
+                  </div>
+                </div>
+              ))}
           </div>
           <div className="flex justify-center">
             <ActionButton
-              title="Create Product"
+              title={productData ? "Edit Product" : "Create Product"}
               loading={isPending}
-              loaderText="Creating..."
+              loaderText={productData ? "Updating..." : "Creating..."}
               type="submit"
             />
           </div>

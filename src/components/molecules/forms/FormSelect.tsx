@@ -14,6 +14,7 @@ interface FormSelectProps {
     items: {
         label: string
         value: string
+        disabled?: boolean
     }[]
     onChange?: (value: string) => void;
 }
@@ -40,7 +41,7 @@ const FormSelect = (props: FormSelectProps) => {
                     </FormControl>
                     <SelectContent>
                         {items.map((item) =>(
-                            <SelectItem value={item.value} key={item.label}>{item.label}</SelectItem>
+                            <SelectItem value={item.value} key={item.label} disabled={item.disabled}>{item.label}</SelectItem>
                         ))}
                     </SelectContent>
                     <FormMessage className="text-xs"/>

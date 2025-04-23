@@ -15,12 +15,12 @@ export const productsTableColumns: ColumnDef<any>[] = [
     accessorKey: "primary_image",
     cell: ({ row }) => (
       <div className="flex items-center space-x-4">
-        <Link href={''}>
-            <img
+        <Link href={""}>
+          <img
             src={row.original.primary_image}
             alt={row.original.name}
             className="w-20 h-20 rounded-lg"
-            />
+          />
         </Link>
       </div>
     ),
@@ -81,12 +81,18 @@ export const productsTableColumns: ColumnDef<any>[] = [
     header: ({ column }) => (
       <DataTableHeaderColumn title="Actions" column={column} />
     ),
-    cell: ({}) => {
+    cell: ({ row }) => {
       return (
         <div className="flex gap-3 items-center">
-          <MdRemoveRedEye size={'20'} className="text-primary cursor-pointer"/>
-          <BiEdit size={'20'} className="text-primary cursor-pointer"/>
-          <RiDeleteBin6Line size={'20'} color="red" className="cursor-pointer"/>
+          <MdRemoveRedEye size={"20"} className="text-primary cursor-pointer" />
+          <Link href={`products/edit-product/${row.original.id}/`}>
+            <BiEdit size={"20"} className="text-primary cursor-pointer" />
+          </Link>
+          <RiDeleteBin6Line
+            size={"20"}
+            color="red"
+            className="cursor-pointer"
+          />
         </div>
       );
     },
