@@ -163,8 +163,6 @@ const AddProductForm = ({ branchId, productData }: IProps) => {
     mutate(newData)
   };  
 
-  console.log(productData)
-
   return (
     <div className="">
       <Form {...form}>
