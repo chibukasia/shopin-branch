@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
 import DataTableHeaderColumn from "@/components/molecules/tables/DataTableColumnHeader";
 import { ColumnDef } from "@tanstack/react-table";
@@ -5,6 +6,9 @@ import { MdRemoveRedEye } from "react-icons/md";
 import { BiEdit } from "react-icons/bi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import Link from "next/link";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteProduct } from "../api";
+import { toast } from "sonner";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const productsTableColumns: ColumnDef<any>[] = [
@@ -82,6 +86,27 @@ export const productsTableColumns: ColumnDef<any>[] = [
       <DataTableHeaderColumn title="Actions" column={column} />
     ),
     cell: ({ row }) => {
+      const queryClient = useQueryClient()
+      const {mutate} = useMutation({
+        mutationKey: ["delete-product"],
+        mutationFn: (id: string) => {
+          return deleteProduct(id);
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["products"] });
+          toast.success("Product deleted successfully", {
+            position: "top-right",
+            duration: 3000,
+          });
+        },
+        onError: (error) => {
+          console.log(error);
+          toast.error("Error deleting product", {
+            position: "top-right",
+            duration: 3000,
+          });
+        },
+      })
       return (
         <div className="flex gap-3 items-center">
           <MdRemoveRedEye size={"20"} className="text-primary cursor-pointer" />
@@ -92,6 +117,9 @@ export const productsTableColumns: ColumnDef<any>[] = [
             size={"20"}
             color="red"
             className="cursor-pointer"
+            onClick={() => {
+              mutate( row.original.id);
+            }}
           />
         </div>
       );
