@@ -60,12 +60,12 @@ const AddProductForm = ({ branchId, productData }: IProps) => {
           values: attr.values,
         };
       }
-      ),
+      ) ?? [],
       attribute_values: productData?.attributes.map((attr: EAttribute) => {
         return attr.values;
       }
       ).flat() ?? [],
-      long_description: productData?.long_description ?? "",
+      // long_description: productData?.long_description ?? "",
       image_gallery: productData?.image_gallery ?? [],
     },
     resolver: zodResolver(productSchema),
