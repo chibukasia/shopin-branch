@@ -464,12 +464,12 @@ const AddProductForm = ({ branchId, productData }: IProps) => {
                 {productData && 
                   <div
                     className="rounded-md w-32 h-32 flex items-center justify-center"
-                    style={{
-                      backgroundImage: "'https://firebasestorage.googleapis.com/v0/b/trendy-17370.appspot.com/o/images%2Fshopinn%2FNaivas%20Bypass%2F1741880353921hoodies-square.jpg?alt=media&token=9b6b36b5-c1c6-4878-842a-a60c96f1af24",
-                      backgroundSize: "contain",
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                    }}
+                    // style={{
+                    //   backgroundImage: `url(${productData.primary_image})`,
+                    //   backgroundSize: "contain",
+                    //   backgroundPosition: "center",
+                    //   backgroundRepeat: "no-repeat",
+                    // }}
                   >
                     <img src={productData.primary_image} alt="Product Image" className="w-full h-full object-cover rounded-md"/>
                   </div>

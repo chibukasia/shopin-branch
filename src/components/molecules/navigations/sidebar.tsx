@@ -80,7 +80,7 @@ const SideBar = () => {
         }).catch((error) => {
           authRedirect(router, error)
         })
-      },[router])
+      },[router, setUser])
   return (
     <nav className={`h-screen bg-primary text-white shadow-md flex flex-col duration-500  ${open ? "w-48 px-3": "w-12 px-2" } overflow-y-scroll`}>
       <div className="py-2 flex items-center justify-between">

@@ -109,7 +109,7 @@ export const productsTableColumns: ColumnDef<any>[] = [
       })
       return (
         <div className="flex gap-3 items-center">
-          <MdRemoveRedEye size={"20"} className="text-primary cursor-pointer" />
+          <Link href={`products/${row.original.id}`}><MdRemoveRedEye size={"20"} className="text-primary cursor-pointer" /></Link>
           <Link href={`products/edit-product/${row.original.id}/`}>
             <BiEdit size={"20"} className="text-primary cursor-pointer" />
           </Link>

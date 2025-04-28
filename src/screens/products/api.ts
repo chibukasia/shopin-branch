@@ -40,3 +40,8 @@ export const deleteProduct = async (id: string) => {
     const response = await axiosClient.patch(`/products/${id}/delete`)
     return response.data
 }
+
+export const fetchProductDetails = async (id: string) => {
+    const response = await axiosClient.get(`/products/${id}/`)
+    return response.data
+}
