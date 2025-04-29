@@ -3,9 +3,11 @@ import Collapsible from "@/components/molecules/accordions/Collapsible";
 import { useParams } from "next/navigation";
 import { fetchProductDetails } from "../api";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { EAttribute } from "../types";
 
 const ProductDetailsScreen = () => {
+    const [imgIndex, setImgIndex] = useState(0)
   const { id } = useParams();
 
   const { data, isLoading } = useQuery({
@@ -105,18 +107,36 @@ const ProductDetailsScreen = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen">
-      <div className="w-3/4">
-        <h1>Product Details</h1>
-        <p>Details about the product will be displayed here.</p>
-      </div>
-      {isLoading && <p>Loading...</p>}
+      
+      {isLoading && (
+        <div className="flex items-center justify-center w-full h-full">
+          <svg
+            className="w-40 h-40 text-gray-200 animate-spin dark:text-gray-600 fill-primary"
+            viewBox="0 0 100 101"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M50 100C77.6142 100 100 77.6142 100 50C100 22.3858 77.6142 0 50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100Z"
+              fill="transparent"
+            />
+            <path
+              d="M93.9717 27.2674C88.8395 16.6461 80.3136 9.99999 69.9999 9.99999C59.6862 9.99999 51.1603 16.6461 45.0281 27.2674"
+              stroke="#3B82F6"
+              strokeWidth="6"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      )}
       {productData && (
         <>
+        {/* <h1 className="text-left">Product Details</h1> */}
           <div className="w-3/4 flex gap-3">
             <div className="w-1/2">
               <div
                 style={{
-                  backgroundImage: `url("${productData.images[0]}")`,
+                  backgroundImage: `url("${productData.images[imgIndex]}")`,
                   backgroundSize: "contain",
                   backgroundPosition: "center",
                   backgroundRepeat: "no-repeat",
@@ -133,12 +153,14 @@ const ProductDetailsScreen = () => {
                       backgroundPosition: "center",
                       backgroundRepeat: "no-repeat",
                     }}
-                    className="w-20 h-20 min-w-20 cursor-pointer flex items-center justify-center border border-primary rounded-lg shadow-md"
+                    onClick={() => setImgIndex(productData.images.indexOf(image))}
+                    className="w-16 h-16 min-w-16 cursor-pointer flex items-center justify-center border border-primary rounded-lg shadow-md"
                   ></div>
                 ))}
               </div>
             </div>
             <div className="w-1/2 px-5">
+                <h1 className="text-2xl font-bold">{productData.details[0].value}</h1>
               <Collapsible title="Product Details">
                 <div className="flex flex-col gap-2">
                   {productData.details.map((detail) => (
@@ -148,7 +170,7 @@ const ProductDetailsScreen = () => {
                       </div>
                       <div className="w-1/2">
                         <div
-                          dangerouslySetInnerHTML={{ __html: detail.value }}
+                          dangerouslySetInnerHTML={{ __html: detail.value.toString().replace(/\b\w/g, (char: string) => char.toUpperCase()) }}
                           className="text-sm text-muted-foreground"
                         ></div>
                       </div>
@@ -157,7 +179,7 @@ const ProductDetailsScreen = () => {
                 </div>
               </Collapsible>
               <Collapsible title="Product Description">
-                <h1 className="text-sm font-medium">Short Description:</h1>
+                <h1 className="text-sm font-medium leading-none">Short Description:</h1>
                 <div
                   dangerouslySetInnerHTML={{
                     __html: productData.short_description,
@@ -181,10 +203,9 @@ const ProductDetailsScreen = () => {
                     <div className="w-1/2">
                       <p className="text-xs text-muted-foreground">
                         {invent.name === "Stock Status"
-                          ? invent.value !== "out_of_stock"
-                            ? "Yes"
-                            : "No"
-                          : invent.value}
+                          ? invent.value.replace(/_/g, " ")
+                              .replace(/\b\w/g, (char: string) => char.toUpperCase())
+                          : invent.value.toString().replace(/\b\w/g, (char: string) => char.toUpperCase())}
                       </p>
                     </div>
                   </div>
@@ -198,14 +219,14 @@ const ProductDetailsScreen = () => {
                     </div>
                     <div className="w-1/2">
                       <p className="text-xs text-muted-foreground">
-                        {ship.value}
+                        {ship.value.toString().replace(/\b\w/g, (char: string) => char.toUpperCase())}
                       </p>
                     </div>
                   </div>
                 ))}
               </Collapsible>
               <Collapsible title="Product Attributes">
-                {productData.attributes.map((attr) => (
+                {productData.attributes.map((attr: EAttribute) => (
                   <div className="flex gap-2" key={attr.name}>
                     <div className="w-1/2">
                       <h1 className="text-xs font-medium">{attr.name}:</h1>
@@ -219,7 +240,7 @@ const ProductDetailsScreen = () => {
                 ))}
               </Collapsible>
               <Collapsible title="Product Categories">
-                {productData.categories.map((cat) => (
+                {productData.categories.map((cat: {name: string}) => (
                   <div className="flex gap-2" key={cat.name}>
                     <div className="">
                       <p className="text-xs text-muted-foreground">
