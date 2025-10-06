@@ -55,7 +55,7 @@ import {
       },
     });
     return (
-      <div className=" rounded-md border">
+      <div className="rounded-md border bg-white">
         
         {searchTypes && (
           <div className="flex items-center p-4 space-x-5">
@@ -71,12 +71,13 @@ import {
           </div>
         )}
   
-        <Table>
-          <TableHeader>
+        <div className="w-full overflow-x-auto overflow-y-hidden">
+        <Table className="min-w-full">
+          <TableHeader className="sticky top-0 bg-muted/40">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="px-4 py-3">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -96,7 +97,7 @@ import {
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-4 py-3">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -104,13 +105,14 @@ import {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-20 text-center">
+                <TableCell colSpan={columns.length} className="h-20 text-center px-4">
                   No Results
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
+        </div>
         <div className="py-4">
           <DataTablePagination table={table}/>
         </div>
