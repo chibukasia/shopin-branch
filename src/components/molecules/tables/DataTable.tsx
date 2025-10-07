@@ -55,29 +55,29 @@ import {
       },
     });
     return (
-      <div className="rounded-md border bg-white">
+      <div className="rounded-xl border border-border bg-card shadow-soft">
         
         {searchTypes && (
-          <div className="flex items-center p-4 space-x-5">
+          <div className="flex items-center p-6 space-x-5 bg-muted/30 border-b border-border">
             <Input
               placeholder="Search..."
               value={(table.getColumn(searchType)?.getFilterValue() as string) ?? ""}
               onChange={(event) =>
                 table.getColumn(searchType)?.setFilterValue(event.target.value)
               }
-              className="max-w-sm"
+              className="max-w-sm input-enhanced"
             />
             <Select items={searchTypes} label="Search by" onValueChange={setSearchType}/>
           </div>
         )}
-  
+
         <div className="w-full overflow-x-auto overflow-y-hidden">
         <Table className="min-w-full">
-          <TableHeader className="sticky top-0 bg-muted/40">
+          <TableHeader className="sticky top-0 bg-muted/50 border-b border-border">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-4 py-3">
+                  <TableHead key={header.id} className="px-6 py-4 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -95,9 +95,10 @@ import {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  className="hover:bg-muted/30 transition-colors duration-150"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-3">
+                    <TableCell key={cell.id} className="px-6 py-4 text-sm text-foreground">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -105,7 +106,7 @@ import {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-20 text-center px-4">
+                <TableCell colSpan={columns.length} className="h-20 text-center px-6 text-muted-foreground">
                   No Results
                 </TableCell>
               </TableRow>
@@ -113,7 +114,7 @@ import {
           </TableBody>
         </Table>
         </div>
-        <div className="py-4">
+        <div className="py-4 px-6 border-t border-border bg-muted/20">
           <DataTablePagination table={table}/>
         </div>
       </div>

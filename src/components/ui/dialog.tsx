@@ -28,26 +28,26 @@ export function Dialog(props: DialogProps) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
         onClick={() => onOpenChange(false)}
       />
       <div
         className={cn(
-          "relative z-10 w-full max-w-2xl rounded-xl border bg-background shadow-xl",
+          "relative z-10 w-full max-w-2xl rounded-xl border border-border bg-card shadow-strong animate-scale-in",
           className
         )}
       >
         {(title || description) && (
-          <div className="px-6 pt-5 pb-3 border-b">
-            {title && <div className="text-xl font-semibold">{title}</div>}
+          <div className="px-6 pt-6 pb-4 border-b border-border bg-muted/20">
+            {title && <div className="text-xl font-semibold text-foreground">{title}</div>}
             {description && (
               <div className="text-sm text-muted-foreground mt-1">{description}</div>
             )}
           </div>
         )}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">{children}</div>
+        <div className="p-6 max-h-[70vh] overflow-y-auto bg-background">{children}</div>
       </div>
     </div>
   );

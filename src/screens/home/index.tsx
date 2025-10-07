@@ -49,23 +49,31 @@ const Home = () => {
           trend={{ value: -15.0, period: "last week" }}
         />
       </div>
-      <div className="bg-white p-4 flex flex-col gap-4 rounded-xl shadow-md w-full">
-        <div className="flex gap-4 justify-between">
+      <div className="bg-card border border-border p-6 flex flex-col gap-6 rounded-xl shadow-soft w-full animate-fade-in">
+        <div className="flex gap-6 justify-between">
           <div className="w-1/2">
-            <BarchartComponent />
+            <div className="bg-background border border-border rounded-lg p-4 shadow-soft">
+              <BarchartComponent />
+            </div>
           </div>
           <div className="w-1/2">
-            <PieChartComponent />
+            <div className="bg-background border border-border rounded-lg p-4 shadow-soft">
+              <PieChartComponent />
+            </div>
           </div>
         </div>
-        <div className="flex gap-4 justify-between">
+        <div className="flex gap-6 justify-between">
             <div className="w-1/2">
-              <p className="text-xl font-semibold pb-3">Top Selling Products</p>
-              <TopSellingsProducts />
+              <div className="bg-background border border-border rounded-lg p-4 shadow-soft">
+                <p className="text-xl font-semibold pb-4 text-foreground">Top Selling Products</p>
+                <TopSellingsProducts />
+              </div>
             </div>
             <div className="w-1/2">
-              <p className="text-xl font-semibold pb-3">Recent Added Products</p>
-              <TopSellingsProducts />
+              <div className="bg-background border border-border rounded-lg p-4 shadow-soft">
+                <p className="text-xl font-semibold pb-4 text-foreground">Recent Added Products</p>
+                <TopSellingsProducts />
+              </div>
             </div>
         </div>
       </div>
